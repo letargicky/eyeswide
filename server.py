@@ -204,7 +204,7 @@ def handle_command(message, sender, client):
 def start_server():
     """Spustenie servera"""
     PORT = 12345  # Nastavte si požadovaný port
-    IP = '192.168.0.159'  # Zadajte svoju miestnu IP adresu (môžete si ju získať príkazom ip addr show)
+    IP = '192.168.0.1'  # Zadajte svoju miestnu IP adresu (môžete si ju získať príkazom ip addr show)
 
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((IP, PORT))  # Pripojenie na špecifickú IP adresu a port
