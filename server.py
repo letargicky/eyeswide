@@ -204,7 +204,7 @@ def start_server():
     """Spustenie servera"""
     PORT = int(os.getenv("PORT", 666))
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind(("198.12.5.67", 12345))
+    server.bind(("0.0.0.0", 12345))
     server.listen()
 
     log_and_broadcast(f"✅ Server beží na porte 18.22.33.443:{PORT}...")
