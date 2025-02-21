@@ -26,6 +26,11 @@ def hash_password(password):
     """Hashuje heslo pomocou SHA-256"""
     return hashlib.sha256(password.encode()).hexdigest()
 
+def log_and_broadcast(message):
+    """Loguje správu a odošle ju všetkým klientom"""
+    print(message)  # Tlačí log na server konzolu
+    broadcast(message)  # Odošle správu všetkým klientom
+
 def authenticate(client, username=None, password=None, register=False):
     """Spracováva registráciu a prihlásenie"""
     users = load_users()
@@ -44,11 +49,13 @@ def authenticate(client, username=None, password=None, register=False):
             users[username] = hash_password(password)
             save_users(users)
             client.send(f"✅ Úspešne si sa registroval ako {username}!\n".encode())
+            log_and_broadcast(f"📝 {username} sa práve zaregistroval.")  # Log registrácie
             return username, True
 
         else:
             # Prihlásenie cez príkaz
             if username in users and users[username] == hash_password(password):
+                log_and_broadcast(f"✅ {username} sa prihlásil.")  # Log prihlásenia
                 return username, True
             else:
                 return None, False
@@ -75,6 +82,7 @@ def authenticate(client, username=None, password=None, register=False):
             users[username] = hash_password(password)
             save_users(users)
             client.send(f"✅ Úspešne si sa registroval ako {username}!\n".encode())
+            log_and_broadcast(f"📝 {username} sa práve zaregistroval.")  # Log registrácie
             return username, True
 
         elif choice == "login":
@@ -95,6 +103,7 @@ def authenticate(client, username=None, password=None, register=False):
 
             if users[username] == hash_password(password):
                 client.send(f"✅ Prihlásenie úspešné! Vitaj {username}!\n".encode())
+                log_and_broadcast(f"✅ {username} sa prihlásil.")  # Log prihlásenia
                 return username, True
             else:
                 client.send("❌ Nesprávne heslo! Skús znova.\n".encode())
@@ -120,7 +129,7 @@ def handle_client(client):
         return
 
     clients[username] = client
-    broadcast(f"✨ {username} sa pripojil!")
+    log_and_broadcast(f"✨ {username} sa pripojil!")  # Log pripojenia
 
     while True:
         try:
@@ -137,7 +146,7 @@ def handle_client(client):
             break
 
     del clients[username]
-    broadcast(f"🚪 {username} opustil chat.")
+    log_and_broadcast(f"🚪 {username} opustil chat.")  # Log odchodu
     client.close()
 
 def handle_command(message, sender, client):
@@ -155,7 +164,7 @@ def handle_command(message, sender, client):
 
         if authenticated:
             clients[username] = client
-            broadcast(f"✨ {username} sa pripojil!")
+            log_and_broadcast(f"✨ {username} sa pripojil!")
 
     elif command == "/login":
         if len(parts) < 3:
@@ -167,7 +176,7 @@ def handle_command(message, sender, client):
 
         if authenticated:
             clients[username] = client
-            broadcast(f"✨ {username} sa pripojil!")
+            log_and_broadcast(f"✨ {username} sa pripojil!")
 
     elif command == "/dm":
         if len(parts) < 3:
@@ -189,16 +198,16 @@ def handle_command(message, sender, client):
         client.send("👋 Odhlasujem...".encode())
         client.close()
         del clients[sender]
-        broadcast(f"{sender} opustil chat.")
+        log_and_broadcast(f"{sender} opustil chat.")
 
 def start_server():
     """Spustenie servera"""
-    PORT = int(os.getenv("PORT", 12345))
+    PORT = int(os.getenv("PORT", 666))
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind(("0.0.0.0", PORT))
+    server.bind(("198.12.5.67", 12345))
     server.listen()
 
-    print(f"✅ Server beží na porte {PORT}...")
+    log_and_broadcast(f"✅ Server beží na porte 18.22.33.443:{PORT}...")
 
     while True:
         client, _ = server.accept()  # IP sa neukladá
