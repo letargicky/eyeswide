@@ -3,6 +3,7 @@ import threading
 import hashlib
 import json
 import os
+import socket
 
 clients = {}  # {meno: socket}
 USERS_FILE = "users.json"
@@ -202,12 +203,13 @@ def handle_command(message, sender, client):
 
 def start_server():
     """Spustenie servera"""
-    PORT = int(os.getenv("PORT", 666))
+    PORT = 12345  # Môžete zmeniť port podľa potreby
+    IP = socket.gethostbyname(socket.gethostname())  # Získanie miestnej IP adresy
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind(("0.0.0.0", 12345))
+    server.bind((IP, PORT))
     server.listen()
 
-    log_and_broadcast(f"✅ Server beží na porte 18.22.33.443:{PORT}...")
+    log_and_broadcast(f"✅ Server beží na IP {IP} a porte {PORT}...")  # Zobrazenie IP a portu
 
     while True:
         client, _ = server.accept()  # IP sa neukladá
