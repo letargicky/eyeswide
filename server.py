@@ -203,10 +203,11 @@ def handle_command(message, sender, client):
 
 def start_server():
     """Spustenie servera"""
-    PORT = 12345  # Môžete zmeniť port podľa potreby
-    IP = socket.gethostbyname(socket.gethostname())  # Získanie miestnej IP adresy
+    PORT = 12345  # Nastavte si požadovaný port
+    IP = '192.168.1.5'  # Zadajte svoju miestnu IP adresu (môžete si ju získať príkazom ip addr show)
+
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind((IP, PORT))
+    server.bind((IP, PORT))  # Pripojenie na špecifickú IP adresu a port
     server.listen()
 
     log_and_broadcast(f"✅ Server beží na IP {IP} a porte {PORT}...")  # Zobrazenie IP a portu
@@ -214,5 +215,6 @@ def start_server():
     while True:
         client, _ = server.accept()  # IP sa neukladá
         threading.Thread(target=handle_client, args=(client,)).start()
+
 
 start_server()
